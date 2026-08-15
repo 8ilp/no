@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> يوسف</title>
+    <title>أداة يوسف الشاملة والكاملة</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#0b0f19] text-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-2xl bg-[#111827] p-6 rounded-2xl shadow-2xl border border-gray-800/80">
         <div class="text-center mb-6">
-            <h1 class="text-2xl font-extrabold text-indigo-400">أداة يوسف  </h1>
+            <h1 class="text-2xl font-extrabold text-indigo-400">أداة يوسف الشاملة والكاملة</h1>
         </div>
         
         <!-- قسم التشفير -->
@@ -17,7 +17,7 @@
             <h2 class="text-sm font-bold mb-3 text-indigo-300">🔒 قسم التشفير والتشويش</h2>
             <div class="mb-3">
                 <select id="encType" class="w-full bg-[#111827] border border-gray-700 rounded-lg p-2 text-xs text-white mb-3">
-                    <optgroup label="حماية روبلوكس (متقدمة)">
+                    <optgroup label="الحماية المتقدمة">
                         <option value="bytecode_vm">تشفير افتراضي مدمر (VM Protection)</option>
                         <option value="heavy_obfuscate">تشويش رموز متطرف (Heavy Obfuscation)</option>
                     </optgroup>
@@ -65,6 +65,7 @@
             </div>
             <div class="flex flex-wrap gap-2 mb-3">
                 <button onclick="decryptTargetScript()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg font-bold text-xs transition">فك التشفير</button>
+                <button onclick="bruteForceDecrypt()" class="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-lg font-bold text-xs transition shadow-lg shadow-purple-900/30">⚡ فك بجميع الطرق تلقائياً</button>
                 <button onclick="copyText('outputDecryptScript')" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-xs transition">نسخ</button>
             </div>
             <div>
@@ -74,54 +75,145 @@
     </div>
 
     <script>
-        function stringToHex(str) { return str.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(''); }
-        function hexToString(hex) { let str = ''; for(let i=0; i<hex.length; i+=2) str += String.fromCharCode(parseInt(hex.substr(i, 2), 16)); return str; }
+        function stringToHex(str) { 
+            return str.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(''); 
+        }
+        
+        function hexToString(hex) { 
+            let str = ''; 
+            for(let i = 0; i < hex.length; i += 2) {
+                str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+            } 
+            return str; 
+        }
 
         function encryptScript() {
             const input = document.getElementById('inputScript').value;
             const type = document.getElementById('encType').value;
             if (!input) return;
             let res = "";
+
             if (type === 'bytecode_vm') {
                 let encoded = '';
-                for(let i=0; i<input.length; i++) encoded += '\\' + (input.charCodeAt(i) ^ 0x5A);
-                res = `-- [Protected by Youssef VM Engine]\nlocal _VM_Data = "${encoded}"\nlocal _Res = ""; for i = 2, #_VM_Data, 4 do _Res = _Res .. string.char(tonumber(_VM_Data:sub(i, i+2)) ~ 0x5A) end; loadstring(_Res)();`;
+                for(let i = 0; i < input.length; i++) {
+                    encoded += '\\' + (input.charCodeAt(i) ^ 0x5A);
+                }
+                res = `-- [Protected by Youssef Engine]\nlocal _VM_Data = "${encoded}"\nlocal _Res = ""; for i = 2, #_VM_Data, 4 do _Res = _Res .. string.char(tonumber(_VM_Data:sub(i, i+2)) ~ 0x5A) end; loadstring(_Res)();`;
             } else if (type === 'heavy_obfuscate') {
                 let chars = input.split('').map(c => c.charCodeAt(0) ^ 0xA5).join(',');
                 res = `local _0xData={${chars}}; local _0xStr=""; for _,v in ipairs(_0xData) do _0xStr=_0xStr..string.char(v ~ 0xA5); end; loadstring(_0xStr)();`;
-            } else if (type === 'base64') res = btoa(encodeURIComponent(input));
-            else if (type === 'hex') res = stringToHex(input);
-            else if (type === 'reverse') res = input.split('').reverse().join('');
-            else if (type === 'rot13') res = input.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
-            else if (type === 'binary') res = input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
-            else if (type === 'obfuscate_chars') res = "String.fromCharCode(" + input.split('').map(c => c.charCodeAt(0)).join(',') + ")";
-            else if (type === 'obfuscate_hex') res = input.split('').map(c => "\\x" + c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+            } else if (type === 'base64') {
+                res = btoa(encodeURIComponent(input));
+            } else if (type === 'hex') {
+                res = stringToHex(input);
+            } else if (type === 'reverse') {
+                res = input.split('').reverse().join('');
+            } else if (type === 'rot13') {
+                res = input.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+            } else if (type === 'binary') {
+                res = input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+            } else if (type === 'obfuscate_chars') {
+                res = "String.fromCharCode(" + input.split('').map(c => c.charCodeAt(0)).join(',') + ")";
+            } else if (type === 'obfuscate_hex') {
+                res = input.split('').map(c => "\\x" + c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+            }
             document.getElementById('outputScript').value = res;
+        }
+
+        function executeDecrypt(input, type) {
+            if (type === 'decrypt_vm') {
+                let match = input.match(/_VM_Data\s*=\s*"([^"]+)"/);
+                if (match) {
+                    return match[1].split('\\').filter(Boolean).map(c => String.fromCharCode(parseInt(c, 10) ^ 0x5A)).join('');
+                }
+            } else if (type === 'decrypt_heavy') {
+                let match = input.match(/_0xData\s*=\s*\{([^}]+)\}/);
+                if (match) {
+                    return match[1].split(',').map(n => String.fromCharCode(parseInt(n.trim()) ^ 0xA5)).join('');
+                }
+            } else if (type === 'base64') {
+                return decodeURIComponent(atob(input));
+            } else if (type === 'hex') {
+                return hexToString(input);
+            } else if (type === 'url') {
+                return decodeURIComponent(input);
+            } else if (type === 'reverse') {
+                return input.split('').reverse().join('');
+            } else if (type === 'rot13') {
+                return input.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+            } else if (type === 'binary') {
+                return input.replace(/\s+/g, '').match(/.{1,8}/g).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+            } else if (type === 'char_code') {
+                let matches = input.match(/\d+/g);
+                return matches ? matches.map(n => String.fromCharCode(parseInt(n))).join('') : "";
+            }
+            throw new Error("Invalid format");
         }
 
         function decryptTargetScript() {
             const input = document.getElementById('inputDecryptScript').value.trim();
             const type = document.getElementById('decType').value;
-            let dec = "";
             try {
-                if (type === 'decrypt_vm') {
-                    let match = input.match(/_VM_Data\s*=\s*"([^"]+)"/);
-                    dec = match ? match[1].split('\\').filter(Boolean).map(c => String.fromCharCode(parseInt(c, 10) ^ 0x5A)).join('') : "خطأ صيغة";
-                } else if (type === 'decrypt_heavy') {
-                    let match = input.match(/_0xData\s*=\s*\{([^}]+)\}/);
-                    dec = match ? match[1].split(',').map(n => String.fromCharCode(parseInt(n.trim()) ^ 0xA5)).join('') : "خطأ صيغة";
-                } else if (type === 'base64') dec = decodeURIComponent(atob(input));
-                else if (type === 'hex') dec = hexToString(input);
-                else if (type === 'url') dec = decodeURIComponent(input);
-                else if (type === 'reverse') dec = input.split('').reverse().join('');
-                else if (type === 'rot13') dec = input.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
-                else if (type === 'binary') dec = input.replace(/\s+/g, '').match(/.{1,8}/g).map(b => String.fromCharCode(parseInt(b, 2))).join('');
-                else if (type === 'char_code') { let matches = input.match(/\d+/g); dec = matches ? matches.map(n => String.fromCharCode(parseInt(n))).join('') : ""; }
+                let dec = executeDecrypt(input, type);
                 document.getElementById('outputDecryptScript').value = dec;
-            } catch(e) { document.getElementById('outputDecryptScript').value = "فشل الفك"; }
+            } catch(e) { 
+                document.getElementById('outputDecryptScript').value = "فشل الفك: تحقق من صحة الكود المدخل أو نوع التشفير"; 
+            }
         }
 
-        function copyText(id) { document.getElementById(id).select(); document.execCommand('copy'); alert("تم النسخ!"); }
+        function bruteForceDecrypt() {
+            const input = document.getElementById('inputDecryptScript').value.trim();
+            if (!input) return;
+
+            const methods = [
+                'decrypt_vm', 
+                'decrypt_heavy', 
+                'base64', 
+                'hex', 
+                'url', 
+                'reverse', 
+                'rot13', 
+                'binary', 
+                'char_code'
+            ];
+
+            let successResult = "";
+            let usedMethodName = "";
+
+            for (let method of methods) {
+                try {
+                    let result = executeDecrypt(input, method);
+                    if (result && result.length > 0) {
+                        successResult = result;
+                        usedMethodName = method;
+                        break;
+                    }
+                } catch (err) {}
+            }
+
+            if (successResult) {
+                document.getElementById('outputDecryptScript').value = successResult;
+                document.getElementById('decType').value = usedMethodName;
+            } else {
+                document.getElementById('outputDecryptScript').value = "❌ عذراً، لم يتم العثور على طريقة مناسبة لفك هذا الكود تلقائياً.";
+            }
+        }
+
+        function copyText(id) {
+            const textElement = document.getElementById(id);
+            textElement.select();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textElement.value).then(() => {
+                    alert("تم النسخ بنجاح!");
+                }).catch(() => {
+                    document.execCommand('copy');
+                    alert("تم النسخ!");
+                });
+            } else {
+                document.execCommand('copy');
+                alert("تم النسخ!");
+            }
+        }
     </script>
 </body>
 </html>
