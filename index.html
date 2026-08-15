@@ -3,190 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>يوسف</title>
+    <title>أداة يوسف المضغطة - التشفير والفك الشامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة CryptoJS للتشفير القوي داخل المتصفح -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
-<body class="bg-gray-950 text-white font-sans min-h-screen p-6">
+<body class="bg-gray-950 text-white font-sans p-4 min-h-screen flex items-center justify-center">
 
-    <div class="max-w-4xl mx-auto bg-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-800">
-        <h1 class="text-3xl font-bold text-center mb-6 text-indigo-400">هههههه</h1>
+    <div class="w-full max-w-xl bg-gray-900 p-4 rounded-xl shadow-xl border border-gray-800 text-xs">
+        <h1 class="text-xl font-bold text-center mb-3 text-indigo-400">أداة يوسف المضغطة الشاملة</h1>
         
-        <!-- إعدادات الخوارزميات واللغات -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-                <label class="block text-sm font-medium mb-2 text-gray-300">لغة السكربت:</label>
-                <select id="scriptLang" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2.5 text-white">
-                    <option value="lua">Lua (Roblox / FiveM)</option>
-                    <option value="python">Python</option>
-                    <option value="js">JavaScript</option>
-                    <option value="csharp">C# (Unity)</option>
+        <!-- قسم التشفير -->
+        <div class="mb-3 p-3 bg-gray-950 rounded-lg border border-gray-800">
+            <h2 class="font-bold mb-2 text-indigo-300">🔒 قسم التشفير والتوليد</h2>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <select id="encType" class="bg-gray-800 border border-gray-700 rounded p-1 text-white">
+                    <option value="aes">AES-256 (بمفتاح)</option>
+                    <option value="base64">Base64</option>
+                    <option value="hex">HEX</option>
+                    <option value="reverse">عكس النص (Reverse)</option>
+                    <option value="rot13">ROT13</option>
+                    <option value="binary">ترميز الثنائي (Binary)</option>
+                </select>
+                <div class="flex gap-1">
+                    <input type="text" id="secretKey" value="Key2026" class="w-full bg-gray-800 border border-gray-700 rounded p-1 text-indigo-300 font-mono" placeholder="المفتاح">
+                    <button onclick="generateRandomKey()" class="bg-indigo-700 hover:bg-indigo-600 px-2 rounded font-bold text-[10px]" title="توليد مفتاح عشوائي">🎲 توليد</button>
+                </div>
+            </div>
+            <textarea id="inputScript" rows="2" class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-green-400 font-mono mb-2 focus:outline-none" placeholder="اكتب السكربت هنا..."></textarea>
+            
+            <div class="flex flex-wrap gap-2 mb-2">
+                <button onclick="encryptScript()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1 rounded font-bold">تشفير بالأداة</button>
+                <button onclick="encryptAllTogether()" class="bg-purple-600 hover:bg-purple-500 px-3 py-1 rounded font-bold">⚡ تشفير شامل دمج</button>
+                <button onclick="copyText('outputScript')" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">نسخ</button>
+            </div>
+            
+            <textarea id="outputScript" rows="3" class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-yellow-400 font-mono mt-1" readonly placeholder="النتيجة المشفرة..."></textarea>
+        </div>
+
+        <!-- قسم فك التشفير (12 أداة) -->
+        <div class="p-3 bg-gray-950 rounded-lg border border-gray-800">
+            <h2 class="font-bold mb-2 text-emerald-400">🔓 فك تشفير سكربت شخص (12 أداة)</h2>
+            <div class="mb-2">
+                <select id="decType" class="w-full bg-gray-800 border border-gray-700 rounded p-1 text-white font-bold">
+                    <option value="base64">1. Base64 Decode</option>
+                    <option value="hex">2. HEX Decode</option>
+                    <option value="url">3. URL Decode</option>
+                    <option value="reverse">4. عكس النص (Reverse)</option>
+                    <option value="rot13">5. ROT13 Cipher</option>
+                    <option value="binary">6. فك ترميز الثنائي (Binary)</option>
+                    <option value="html">7. HTML Entities Decode</option>
+                    <option value="eval_clean">8. تنظيف Eval / Unescape</option>
+                    <option value="ascii_shift">9. فك إزاحة الأكواد (-1 Shift)</option>
+                    <option value="base64_twice">10. Base64 مرتين (Double)</option>
+                    <option value="char_code">11. فك CharCode/String.from</option>
+                    <option value="unicode">12. فك رموز Unicode (\uXXXX)</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-medium mb-2 text-gray-300">اختر خوارزمية التشفير:</label>
-                <select id="encType" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2.5 text-white">
-                    <option value="aes">AES-256 (مدري جربه بس هو قوي)</option>
-                    <option value="tripledes">TripleDES</option>
-                    <option value="rabbit">Rabbit Stream Cipher</option>
-                    <option value="rc4">RC4 Cipher</option>
-                    <option value="base64">Base64 Advanced</option>
-                    <option value="hex">HEX Encoding</option>
-                    <option value="eval">JavaScript/Lua Eval Obfuscation</option>
-                </select>
+            <textarea id="inputDecryptScript" rows="2" class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-red-400 font-mono mb-2 focus:outline-none" placeholder="ألصق كود الشخص المشفر هنا..."></textarea>
+            <div class="flex gap-2">
+                <button onclick="decryptTargetScript()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1 rounded font-bold">فك التشفير</button>
+                <button onclick="copyText('outputDecryptScript')" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">نسخ</button>
             </div>
-            <div>
-                <label class="block text-sm font-medium mb-2 text-gray-300">مفتاح التشفير (Secret Key):</label>
-                <input type="text" id="secretKey" value="GameScriptKey2026" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2.5 text-indigo-300 font-mono text-sm">
-            </div>
-        </div>
-
-        <!-- صندوق الإدخال -->
-        <div class="mb-4">
-            <label class="block text-sm font-medium mb-2 text-gray-300">ألصق السكربت هنا:</label>
-            <textarea id="inputScript" rows="6" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-3 text-green-400 font-mono text-sm focus:border-indigo-500 focus:outline-none" placeholder="print('Hello Game Script!')"></textarea>
-        </div>
-
-        <!-- أزرار التحكم والعمليات -->
-        <div class="flex flex-wrap gap-3 mb-6">
-            <button onclick="encryptScript()" class="bg-indigo-600 hover:bg-indigo-500 px-5 py-2.5 rounded-lg font-bold transition shadow-lg shadow-indigo-600/30">🔒 تشفير بالخوارزمية المحددة</button>
-            <button onclick="encryptAllAlgorithms()" class="bg-purple-600 hover:bg-purple-500 px-5 py-2.5 rounded-lg font-bold transition shadow-lg shadow-purple-600/30">⚡ تشفير شامل بكل الخوارزميات (زر واحد)</button>
-            <button onclick="decryptScript()" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-lg font-bold transition shadow-lg shadow-emerald-600/30">🔓 فك التشفير (للمدعم محلياً)</button>
-            <button onclick="copyOutput()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2.5 rounded-lg font-bold transition">📋 نسخ النتيجة</button>
-        </div>
-
-        <!-- صندوق الإخراج -->
-        <div>
-            <label class="block text-sm font-medium mb-2 text-gray-300">النتيجة:</label>
-            <textarea id="outputScript" rows="6" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-3 text-yellow-400 font-mono text-sm focus:outline-none" readonly placeholder="ستظهر النتيجة هنا..."></textarea>
+            <textarea id="outputDecryptScript" rows="2" class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-green-400 font-mono mt-2" readonly placeholder="النص الأصلي..."></textarea>
         </div>
     </div>
 
     <script>
-        // دالة التشفير الفردية
+        // توليد مفتاح عشوائي قوي تلقائياً
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let key = '';
+            for (let i = 0; i < 16; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('secretKey').value = key;
+        }
+
+        function stringToHex(str) {
+            let hex = '';
+            for (let i = 0; i < str.length; i++) {
+                hex += str.charCodeAt(i).toString(16).padStart(2, '0');
+            }
+            return hex;
+        }
+
+        function hexToString(hex) {
+            let str = '';
+            for (let i = 0; i < hex.length; i += 2) {
+                str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+            }
+            return str;
+        }
+
+        function stringToBinary(str) {
+            return str.split('').map(char => char.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+        }
+
         function encryptScript() {
             const input = document.getElementById('inputScript').value;
             const type = document.getElementById('encType').value;
             const key = document.getElementById('secretKey').value;
-            
-            if (!input) { alert('الرجاء إدخال السكربت أولاً!'); return; }
-
-            let result = "";
+            if (!input) { alert('أدخل السكربت!'); return; }
+            let res = "";
             try {
-                if (type === 'aes') {
-                    result = CryptoJS.AES.encrypt(input, key).toString();
-                } else if (type === 'tripledes') {
-                    result = CryptoJS.TripleDES.encrypt(input, key).toString();
-                } else if (type === 'rabbit') {
-                    result = CryptoJS.Rabbit.encrypt(input, key).toString();
-                } else if (type === 'rc4') {
-                    result = CryptoJS.RC4.encrypt(input, key).toString();
-                } else if (type === 'base64') {
-                    result = btoa(encodeURIComponent(input));
-                } else if (type === 'hex') {
-                    result = CryptoJS.enc.Hex.stringify(CryptoJS.enc.Utf8.parse(input));
-                } else if (type === 'eval') {
-                    let encoded = btoa(encodeURIComponent(input));
-                    result = `// Obfuscated Script\nFunction(decodeURIComponent(atob("${encoded}")))();`;
-                }
-                document.getElementById('outputScript').value = result;
-            } catch (e) {
-                alert('حدث خطأ أثناء التشفير: ' + e.message);
-            }
+                if (type === 'aes') res = CryptoJS.AES.encrypt(input, key).toString();
+                else if (type === 'base64') res = btoa(encodeURIComponent(input));
+                else if (type === 'hex') res = stringToHex(input);
+                else if (type === 'reverse') res = input.split('').reverse().join('');
+                else if (type === 'rot13') res = input.replace(/[a-zA-Z]/g, function(c) { return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26); });
+                else if (type === 'binary') res = stringToBinary(input);
+                document.getElementById('outputScript').value = res;
+            } catch (e) { alert('خطأ في التشفير'); }
         }
 
-        // دالة التشفير الشامل بكل الخوارزميات بضغطة زر واحدة
-        function encryptAllAlgorithms() {
+        function encryptAllTogether() {
             const input = document.getElementById('inputScript').value;
             const key = document.getElementById('secretKey').value;
-            if (!input) { alert('الرجاء إدخال السكربت أولاً!'); return; }
-
-            let aesRes = CryptoJS.AES.encrypt(input, key).toString();
-            let tripleRes = CryptoJS.TripleDES.encrypt(input, key).toString();
-            let rabbitRes = CryptoJS.Rabbit.encrypt(input, key).toString();
-            let rc4Res = CryptoJS.RC4.encrypt(input, key).toString();
-            let base64Res = btoa(encodeURIComponent(input));
-            let hexRes = CryptoJS.enc.Hex.stringify(CryptoJS.enc.Utf8.parse(input));
-            let evalRes = `Function(decodeURIComponent(atob("${base64Res}")))();`;
-
-            let multiEncrypted = `--- [ULTIMATE ALL-IN-ONE GAME SCRIPT ENCRYPTION] ---
-[1] AES-256: 
-${aesRes}
-
-[2] TripleDES: 
-${tripleRes}
-
-[3] Rabbit Cipher: 
-${rabbitRes}
-
-[4] RC4 Cipher: 
-${rc4Res}
-
-[5] Base64 Advanced: 
-${base64Res}
-
-[6] HEX Encoding: 
-${hexRes}
-
-[7] Obfuscated Eval: 
-${evalRes}
------------------------------------------------------`;
-
-            document.getElementById('outputScript').value = multiEncrypted;
-        }
-
-        // دالة فك التشفير (مخصصة للأنواع التي تدعم الفك المحلي فقط لمنع الأخطاء)
-        function decryptScript() {
-            const input = document.getElementById('inputScript').value.trim();
-            const type = document.getElementById('encType').value;
-            const key = document.getElementById('secretKey').value;
-
-            if (!input) { alert('الرجاء إدخال النص المشفر لفك تشفيره!'); return; }
-            
-            // التحقق من عدم محاولة فك التشفير الشامل المعقد محلياً بدون سيرفر
-            if (type === 'eval' || input.includes('ULTIMATE ALL-IN-ONE')) {
-                alert('تنبيه: التشفير الشامل أو المعقد جداً لا يمكن فكه محلياً بدون سيرفر مخصص! يرجى اختيار خوارزمية فردية مثل AES أو Base64 لفكها.');
-                return;
-            }
-
+            if (!input) { alert('أدخل السكربت!'); return; }
             try {
-                let decrypted = "";
-                if (type === 'aes') {
-                    let bytes = CryptoJS.AES.decrypt(input, key);
-                    decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                } else if (type === 'tripledes') {
-                    let bytes = CryptoJS.TripleDES.decrypt(input, key);
-                    decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                } else if (type === 'rabbit') {
-                    let bytes = CryptoJS.Rabbit.decrypt(input, key);
-                    decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                } else if (type === 'rc4') {
-                    let bytes = CryptoJS.RC4.decrypt(input, key);
-                    decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                } else if (type === 'base64') {
-                    decrypted = decodeURIComponent(atob(input));
-                } else if (type === 'hex') {
-                    let bytes = CryptoJS.enc.Hex.parse(input);
-                    decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                }
-
-                if (decrypted) {
-                    document.getElementById('outputScript').value = decrypted;
-                } else {
-                    document.getElementById('outputScript').value = "فشل فك التشفير: تأكد من صحة المفتاح (Secret Key) أو مطابقة نوع الخوارزمية!";
-                }
+                let step1 = input.split('').reverse().join('');
+                let step2 = btoa(encodeURIComponent(step1));
+                let step3 = stringToHex(step2);
+                let finalRes = CryptoJS.AES.encrypt(step3, key).toString();
+                document.getElementById('outputScript').value = finalRes;
             } catch (e) {
-                document.getElementById('outputScript').value = "خطأ: النص المدخل غير صالح أو المفتاح غير صحيح لفك التشفير.";
+                alert('حدث خطأ أثناء الدمج');
             }
         }
 
-        // دالة نسخ النتيجة
-        function copyOutput() {
-            const output = document.getElementById('outputScript');
-            output.select();
+        function decryptTargetScript() {
+            const input = document.getElementById('inputDecryptScript').value.trim();
+            const type = document.getElementById('decType').value;
+            if (!input) { alert('أدخل الكود!'); return; }
+            
+            let dec = "";
+            try {
+                if (type === 'base64') {
+                    dec = decodeURIComponent(atob(input));
+                } else if (type === 'hex') {
+                    dec = hexToString(input);
+                } else if (type === 'url') {
+                    dec = decodeURIComponent(input);
+                } else if (type === 'reverse') {
+                    dec = input.split('').reverse().join('');
+                } else if (type === 'rot13') {
+                    dec = input.replace(/[a-zA-Z]/g, function(c) {
+                        return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+                    });
+                } else if (type === 'binary') {
+                    dec = input.replace(/\s+/g, '').match(/.{1,8}/g).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+                } else if (type === 'html') {
+                    let doc = new DOMParser().parseFromString(input, 'text/html');
+                    dec = doc.documentElement.textContent;
+                } else if (type === 'eval_clean') {
+                    dec = input.replace(/eval\s*\(/g, 'print(').replace(/unescape\s*\(/g, '');
+                } else if (type === 'ascii_shift') {
+                    dec = input.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('');
+                } else if (type === 'base64_twice') {
+                    dec = decodeURIComponent(atob(decodeURIComponent(atob(input))));
+                } else if (type === 'char_code') {
+                    let matches = input.match(/\d+/g);
+                    if (matches) {
+                        dec = matches.map(n => String.fromCharCode(parseInt(n))).join('');
+                    } else {
+                        dec = "لا توجد رموز مطابقة لـ CharCode";
+                    }
+                } else if (type === 'unicode') {
+                    dec = input.replace(/\\u[\dA-F]{4}/gi, match => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
+                }
+
+                document.getElementById('outputDecryptScript').value = dec || "فشل الفك أو النتيجة فارغة";
+            } catch (e) {
+                document.getElementById('outputDecryptScript').value = "خطأ في تنفيذ الأداة المحددة على هذا النص.";
+            }
+        }
+
+        function copyText(id) {
+            const el = document.getElementById(id);
+            el.select();
             document.execCommand('copy');
-            alert('تم نسخ النتيجة إلى الحافظة بنجاح!');
+            alert('تم النسخ!');
         }
     </script>
 </body>
